@@ -1,0 +1,26 @@
+import java.util.Random;
+import java.util.concurrent.Callable;
+
+public class TransferTask implements Callable<Boolean> {
+    private final Account from;
+    private final Account to;
+    private final Random random;
+
+    public TransferTask(Account from, Account to, Random random) {
+        this.from = from;
+        this.to = to;
+        this.random = random;
+    }
+
+    @Override
+    public Boolean call(){
+        int amount = random.nextInt(1000);
+        boolean success = from.transfer(to, amount);
+        if (success) {
+            System.out.printf("Transferred %d from %s to %sn", amount, from.getId(), to.getId());
+        } else {
+            System.out.printf("Failed to transfer %d from %s to %sn", amount, from.getId(), to.getId());
+        }
+        return success;
+    }
+}
