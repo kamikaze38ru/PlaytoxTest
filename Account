@@ -1,0 +1,38 @@
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class Account {
+    private final String id;
+    private final AtomicInteger money;
+
+    public Account(String id, int money) {
+        this.id = id;
+        this.money = new AtomicInteger(money);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public int getMoney() {
+        return money.get();
+    }
+
+    public boolean transfer(Account to, int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+        if (this.money.get() < amount) {
+            return false;
+        }
+        if (this.money.addAndGet(-amount) < 0) {
+            this.money.addAndGet(amount);
+            return false;
+        }
+        if (to.money.addAndGet(amount) < 0) {
+            this.money.addAndGet(amount);
+            to.money.addAndGet(-amount);
+            return false;
+        }
+        return true;
+    }
+}
